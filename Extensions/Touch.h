@@ -40,3 +40,45 @@
 
   uint32_t _pressTime;        // Press and hold time-out
   uint16_t _pressX, _pressY;  // For future use (last sampled calibrated coordinates)
+
+ public:
+
+  // Control byte constants for XPT2046 chip
+  struct Xpt2046 {
+    enum {
+      Start = (1<<7), // Start bit
+
+      RefSer = (1<<2), // Single-Ended Reference Mode
+      RefDfr = (0<<2), // Differential Reference Mode
+
+      // Reference+Channel selection:
+      SerTemp0 = ((0b000 <<4)|RefSer),
+      SerY     = ((0b001 <<4)|RefSer),
+      SerVBat  = ((0b010 <<4)|RefSer), // unfortunately on popular boards the VBAT pin is connected to GND
+      SerZ1    = ((0b011 <<4)|RefSer),
+      SerZ2    = ((0b100 <<4)|RefSer),
+      SerX     = ((0b101 <<4)|RefSer),
+      SerAux   = ((0b110 <<4)|RefSer), // unfortunately on popular boards the AUX pin is connected to GND
+      SerTemp1 = ((0b111 <<4)|RefSer),
+
+      DfrY  = ((0b001 <<4)|RefDfr),
+      DfrZ1 = ((0b011 <<4)|RefDfr),
+      DfrZ2 = ((0b100 <<4)|RefDfr),
+      DfrX  = ((0b101 <<4)|RefDfr),
+
+      Mode8bit =  (1<<3),
+      Mode12bit = (0<<3),
+
+      // Power down
+      // Notes:
+      // The reference voltage requires some time to get powered
+      // Additional write needed to turn reference voltage off
+      // The reference voltage is used in SER mode
+      // ADC requires no wake up time and can be used instantly
+      // IRQ is disabled when ADC is powered
+      KeepOff   = (0b00<<0),
+      KeepRefOn = (0b10<<0), // Power down bit for reference voltage
+      KeepAdcOn = (0b01<<0), // Power down bit for ADC
+      KeepOn    = (0b11<<0)
+    };
+  };
